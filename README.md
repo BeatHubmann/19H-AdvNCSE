@@ -1,5 +1,5 @@
 # 19H-AdvNCSE
-Projects and homework for the course [Advanced Numerical Methods for CSE](#http://www.vvz.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?lang=en&lerneinheitId=132023&semkez=2019W&ansicht=KATALOGDATEN&) @ ETHZ, HS2019
+Projects and homework for the course [Advanced Numerical Methods for CSE](http://www.vvz.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?lang=en&lerneinheitId=132023&semkez=2019W&ansicht=KATALOGDATEN&) @ ETHZ, HS2019
 
 Course Synopsis:
 
