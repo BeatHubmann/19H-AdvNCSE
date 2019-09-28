@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="2d-poissonlFEM" targetName="EigenProject" />
+      <config projectName="2d-poissonlFEM" targetName="unittest" />
+      <config projectName="2d-poissonlFEM" targetName="fem2d" />
+      <config projectName="2d-poissonlFEM" targetName="IGLProject" />
+      <config projectName="2d-poissonlFEM" targetName="GTestProject" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b07907f7-e3b1-4cdf-98d1-702ed4536687" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unittest/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/unittest/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../linear-transp-1d/code/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../linear-transp-1d/code/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../linear-transp-1d/code/cmake/warning_flags.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/../../linear-transp-1d/code/cmake/warning_flags.cmake" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="ProjectId" id="1RQEc04056TXuyVPjeUN4YB0ovo" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/CMakeLists.txt" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="CMake Application.fem2d">
+    <configuration name="EigenProject" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="2d-poissonlFEM" TARGET_NAME="EigenProject" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GTestProject" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="2d-poissonlFEM" TARGET_NAME="GTestProject" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IGLProject" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="2d-poissonlFEM" TARGET_NAME="IGLProject" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fem2d" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="square_0" PASS_PARENT_ENVS_2="true" PROJECT_NAME="2d-poissonlFEM" TARGET_NAME="fem2d" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="2d-poissonlFEM" RUN_TARGET_NAME="fem2d">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="unittest" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="2d-poissonlFEM" TARGET_NAME="unittest" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="2d-poissonlFEM" RUN_TARGET_NAME="unittest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.EigenProject" />
+      <item itemvalue="CMake Application.fem2d" />
+      <item itemvalue="CMake Application.IGLProject" />
+      <item itemvalue="CMake Application.GTestProject" />
+      <item itemvalue="CMake Application.unittest" />
+    </list>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b07907f7-e3b1-4cdf-98d1-702ed4536687" name="Default Changelist" comment="" />
+      <created>1569590994902</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1569590994902</updated>
+      <workItem from="1569590998994" duration="549000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
