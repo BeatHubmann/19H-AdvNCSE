@@ -19,4 +19,19 @@ TEST(TestCentralFlux, consistency) {
     check_consistency(central_flux);
 }
 
+TEST(TestRusanovFlux, consistency)
+{
+    auto model= make_dummy_model();
+    auto rusanov_flux= RusanovFlux(model);
 
+    check_consistency(rusanov_flux);
+}
+
+TEST(TestLxFFlux, consistency)
+{
+    auto model= make_dummy_model();
+    const double dx{0.1};
+    const double dt{0.1};
+    auto lxf_flux= LxFFlux(model, dx, dt);
+    check_consistency(lxf_flux);
+}

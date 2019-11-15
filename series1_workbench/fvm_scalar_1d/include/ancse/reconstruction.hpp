@@ -5,6 +5,8 @@
 #include <cmath>
 #include <memory>
 
+#include <iostream>
+
 #include <ancse/grid.hpp>
 #include <ancse/model.hpp>
 #include <ancse/rate_of_change.hpp>
@@ -40,5 +42,31 @@ class PWConstantReconstruction {
     }
 };
 
+class minmodReconstruction
+{
+    public:
+        inline std::pair<double, double> operator()(const Eigen::VectorXd &u, int i) const
+        {
+            return {0.0, 0.0};
+        }
+
+        inline std::pair<double, double> operator()(double ua, double ub) const
+        {
+            return {0.0, 0.0};
+        }
+
+        inline double minmod(const Eigen::VectorXd &a)
+        {
+            int minPos;
+            std::cout << a.array().sign() << std::endl;
+            if (std::abs(a.array().sign().mean()) == 1.0)
+            {
+                a.cwiseAbs().minCoeff(&minPos);
+                return a[minPos];
+            }
+            else
+                return 0.0;
+        }
+};
 
 #endif // FVMSCALAR1D_RATE_OF_CHANGE_HPP

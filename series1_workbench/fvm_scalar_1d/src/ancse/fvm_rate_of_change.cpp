@@ -22,6 +22,8 @@ deduce_numerical_flux(const Grid &grid,
     REGISTER_NUMERICAL_FLUX("central_flux", CentralFlux, CentralFlux(model))
 
     // Register the other numerical fluxes.
+    REGISTER_NUMERICAL_FLUX("rusanov_flux", RusanovFlux, RusanovFlux(model))
+    REGISTER_NUMERICAL_FLUX("lxf_flux", LxFFlux, LxFFlux(model, grid.dx, simulation_time->dt))
 
     throw std::runtime_error(
         fmt::format("Unknown numerical flux. {}", std::string(config["flux"])));

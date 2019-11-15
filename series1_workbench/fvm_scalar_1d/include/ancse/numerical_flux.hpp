@@ -35,4 +35,47 @@ class CentralFlux {
 };
 
 
+/// Rusanov flux.
+/**
+ * 
+ */
+class RusanovFlux
+{
+    public:
+        explicit RusanovFlux(const Model &model) : model(model) {}
+
+        double operator()(double uL, double uR) const
+        {
+            auto fL= model.flux(uL);
+            auto fR= model.flux(uR);
+            auto s= std::max(std::abs(model.max_eigenvalue(uL)),
+                                 std::abs(model.max_eigenvalue(uR)));            
+            return 0.5 * ((fL + fR) - s * (uR - uL));
+        }
+
+    private:
+        Model model;
+};
+
+/// Lax Friedrichs flux.
+/**
+ * 
+ */
+class LxFFlux
+{
+    public:
+        explicit LxFFlux(const Model &model, const double dx, const double dt) : model(model), s(dx/dt) {}
+
+        double operator()(double uL, double uR) const
+        {
+            auto fL= model.flux(uL);
+            auto fR= model.flux(uR);
+            return 0.5 * ((fL + fR) - s * (uR - uL));
+        }
+
+    private:
+        Model model;
+        double s;
+};
+
 #endif // FVMSCALAR1D_NUMERICAL_FLUX_HPP
