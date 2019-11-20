@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"name": "series2_workbench",
+			"path": "series2_workbench"
+		},
+		{
+			"name": "series2_data",
+			"path": "series2_data"
+		},
+		{
+			"name": "series1_solution",
+			"path": "series1_solution"
+		},
+		{
+			"name": "series0_solution",
+			"path": "series0_solution"
+		}
+	]
+}
