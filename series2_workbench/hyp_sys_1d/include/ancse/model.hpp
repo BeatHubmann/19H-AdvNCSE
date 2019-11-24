@@ -82,44 +82,152 @@ class Burgers : public Model {
 
 /// Euler equations
 class Euler : public Model {
-  public:
-    
-    Eigen::VectorXd flux(const Eigen::VectorXd &u) const override;
-    
-    Eigen::VectorXd eigenvalues(const Eigen::VectorXd &u) const override;
+    public:
 
-    Eigen::MatrixXd eigenvectors(const Eigen::VectorXd &u) const override;
-    
-    double max_eigenvalue(const Eigen::VectorXd &u) const override;
+        Eigen::VectorXd flux(const Eigen::VectorXd &u) const override
+        {
+            Eigen::VectorXd f(n_vars);
+            
+            f << rho(u) * v(u),
+                 rho(u) * v(u) * v(u) + p(u),
+                 (E(u) + p(u)) * v(u);
+                
+            return f;
+        }
+        
+        Eigen::VectorXd eigenvalues(const Eigen::VectorXd &u) const override
+        {
+            Eigen::VectorXd eigvals(n_vars);
+        
+            eigvals << v(u) - c(u),
+                       v(u),
+                       v(u) + c(u);
 
-    Eigen::VectorXd cons_to_prim(const Eigen::VectorXd &u_cons) const override;
+            return eigvals;
+        }
 
-    Eigen::VectorXd prim_to_cons(const Eigen::VectorXd &u_prim) const override;
-    
+        Eigen::MatrixXd eigenvectors(const Eigen::VectorXd &u) const override
+        {
+            Eigen::MatrixXd eigvecs(n_vars, n_vars);
+            
+            eigvecs << 1.0,                    1.0,                 1.0,
+                       v(u) - c(u),            v(u),                v(u) + c(u),
+                       H(u) - (v(u) * c(u)),   0.5 * v(u) * v(u),   H(u) - (v(u) * c(u));
 
-    void set_gamma(double gamma_)
-    {
-        gamma = gamma_;
-    }
+            return eigvecs;
+        }
+       
+        double max_eigenvalue(const Eigen::VectorXd &u) const override
+        {
+            return eigenvalues(u)(2);
+        }
 
-    double get_gamma() const
-    {
-        return gamma;
-    }
+        Eigen::VectorXd cons_to_prim(const Eigen::VectorXd &u_cons) const override
+        {
+            Eigen::VectorXd u_prim(n_vars);
+            
+            double m, p, rho, v, E;
+            rho= u_cons(0);
+            m= u_cons(1);
+            E= u_cons(2);
+            v= m / rho;
+            p= (E - 0.5 * rho * v * v) * (gamma - 1);
 
-    int get_nvars() const override
-    {
-        return n_vars;
-    }
+            u_prim << rho,
+                      v,
+                      p;
+                      
+            return u_prim;
+        }
+        
+        Eigen::VectorXd prim_to_cons(const Eigen::VectorXd &u_prim) const override
+        {
+            Eigen::VectorXd u_cons(n_vars);
 
-    std::string get_name() const override
-    {
-        return "euler";
-    }
+            u_cons << rho(u_prim),
+                      m(u_prim),
+                      E(u_prim);
 
-  private:
-    int n_vars = 3;
-    double gamma = 5./3.;
+            return u_cons;
+        }
+
+        void set_gamma(const double gamma_)
+        {
+            gamma= gamma_;
+        }
+
+        double get_gamma() const
+        {
+            return gamma;
+        }
+
+        int get_nvars() const override
+        {
+            return n_vars;
+        }
+
+        std::string get_name() const override
+        {
+            return name;
+        }
+
+    private:
+        const int n_vars= 3;
+        double gamma= 5./3.;
+        inline static const std::string name= "euler";
+
+
+        /// Helper functions to deal w/ common names for Euler eqn expressions
+        /// Vector u_prim must contain primary variables: u_prim = (rho, v, p)'
+        /// ------------------------------------------------------------------
+
+        /// Primitive variables:
+        // rho : density
+        inline double rho(const Eigen::VectorXd& u_prim) const
+        {
+            return u_prim(0);
+        }
+
+        // v : velocity
+        inline double v(const Eigen::VectorXd& u_prim) const
+        {
+            return u_prim(1);
+        }
+
+        // p : pressure
+        inline double p(const Eigen::VectorXd& u_prim) const
+        {
+            return u_prim(2);
+        }
+
+
+
+        /// Conserved variables:
+        // m : momentum
+        inline double m(const Eigen::VectorXd& u_prim) const
+        {
+            return rho(u_prim) * v(u_prim);
+        }
+
+        // E : total energy for ideal polytropic gas (internal energy + kinetic energy)
+        inline double E(const Eigen::VectorXd& u_prim) const
+        {
+            return p(u_prim) / (gamma - 1) + 0.5 * rho(u_prim) * v(u_prim) * v(u_prim);
+        }
+
+
+        /// c : speed of sound
+        inline double c(const Eigen::VectorXd& u_prim) const
+        {
+            return std::sqrt(gamma * p(u_prim) / rho(u_prim));
+        }
+
+        /// H : total specific enthalpy
+        inline double H(const Eigen::VectorXd& u_prim) const
+        {
+            return (E(u_prim) + p(u_prim)) / rho(u_prim);
+        }
+        
 };
 
 
