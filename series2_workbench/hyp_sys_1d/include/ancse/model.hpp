@@ -119,7 +119,7 @@ class Euler : public Model {
        
         double max_eigenvalue(const Eigen::VectorXd &u) const override
         {
-            return eigenvalues(u)(2);
+            return (eigenvalues(u).cwiseAbs()).maxCoeff();
         }
 
         Eigen::VectorXd cons_to_prim(const Eigen::VectorXd &u_cons) const override
