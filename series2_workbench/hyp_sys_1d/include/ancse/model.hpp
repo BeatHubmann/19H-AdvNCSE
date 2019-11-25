@@ -15,6 +15,7 @@ class Model {
   public:
     virtual ~Model() = default;
 
+    // Pure virtual functions:
     virtual Eigen::VectorXd flux(const Eigen::VectorXd &u) const = 0;
     virtual Eigen::VectorXd eigenvalues(const Eigen::VectorXd &u) const = 0;
     virtual Eigen::MatrixXd eigenvectors(const Eigen::VectorXd &u) const = 0;
@@ -25,6 +26,17 @@ class Model {
 
     virtual int get_nvars() const = 0;
     virtual std::string get_name() const = 0;
+
+    // Virtual functions:
+    virtual double rho(const Eigen::VectorXd& u_prim) const {}
+    virtual double v(const Eigen::VectorXd& u_prim) const {}
+    virtual double p(const Eigen::VectorXd& u_prim) const {}
+    virtual double m(const Eigen::VectorXd& u_prim) const {}
+    virtual double E(const Eigen::VectorXd& u_prim) const {}
+    virtual double c(const Eigen::VectorXd& u_prim) const {}
+    virtual double H(const Eigen::VectorXd& u_prim) const {}
+    virtual void set_gamma(const double gamma_) {}
+    virtual double get_gamma() const {}
 };
 
 class Burgers : public Model {
@@ -131,7 +143,7 @@ class Euler : public Model {
             m= u_cons(1);
             E= u_cons(2);
             v= m / rho;
-            p= (E - 0.5 * rho * v * v) * (gamma - 1);
+            p= (gamma - 1) * (E - 0.5 * rho * v * v);
 
             u_prim << rho,
                       v,
@@ -151,17 +163,17 @@ class Euler : public Model {
             return u_cons;
         }
 
-        void set_gamma(const double gamma_)
+        inline void set_gamma(const double gamma_) override
         {
             gamma= gamma_;
         }
 
-        double get_gamma() const
+        inline double get_gamma() const override
         {
             return gamma;
         }
 
-        int get_nvars() const override
+        inline int get_nvars() const override
         {
             return n_vars;
         }
@@ -172,8 +184,11 @@ class Euler : public Model {
         }
 
     private:
+        // 3D:
         const int n_vars= 3;
+        // Monatomic gas:
         double gamma= 5./3.;
+
         inline static const std::string name= "euler";
 
 
@@ -183,19 +198,19 @@ class Euler : public Model {
 
         /// Primitive variables:
         // rho : density
-        inline double rho(const Eigen::VectorXd& u_prim) const
+        inline double rho(const Eigen::VectorXd& u_prim) const override
         {
             return u_prim(0);
         }
 
         // v : velocity
-        inline double v(const Eigen::VectorXd& u_prim) const
+        inline double v(const Eigen::VectorXd& u_prim) const override
         {
             return u_prim(1);
         }
 
         // p : pressure
-        inline double p(const Eigen::VectorXd& u_prim) const
+        inline double p(const Eigen::VectorXd& u_prim) const override
         {
             return u_prim(2);
         }
@@ -204,26 +219,26 @@ class Euler : public Model {
 
         /// Conserved variables:
         // m : momentum
-        inline double m(const Eigen::VectorXd& u_prim) const
+        inline double m(const Eigen::VectorXd& u_prim) const override
         {
             return rho(u_prim) * v(u_prim);
         }
 
         // E : total energy for ideal polytropic gas (internal energy + kinetic energy)
-        inline double E(const Eigen::VectorXd& u_prim) const
+        inline double E(const Eigen::VectorXd& u_prim) const override
         {
             return p(u_prim) / (gamma - 1) + 0.5 * rho(u_prim) * v(u_prim) * v(u_prim);
         }
 
 
         /// c : speed of sound
-        inline double c(const Eigen::VectorXd& u_prim) const
+        inline double c(const Eigen::VectorXd& u_prim) const override
         {
             return std::sqrt(gamma * p(u_prim) / rho(u_prim));
         }
 
         /// H : total specific enthalpy
-        inline double H(const Eigen::VectorXd& u_prim) const
+        inline double H(const Eigen::VectorXd& u_prim) const override
         {
             return (E(u_prim) + p(u_prim)) / rho(u_prim);
         }

@@ -98,7 +98,38 @@ class Roe
         
             auto fL= model->flux(uL);
             auto fR= model->flux(uR);
-            // TODO: Calculate Roe matrix/flux
+
+            auto gamma= model->get_gamma();
+            auto rhoL= model->rho(uL);
+            auto rhoR= model->rho(uR);
+            auto vL= model->v(uL);
+            auto vR= model->v(uR);
+            auto HL= model->H(uL);
+            auto HR= model->H(uR);
+
+            const double rhoL_sqrt= std::sqrt(rhoL);
+            const double rhoR_sqrt= std::sqrt(rhoR);
+
+            // Step 1: Calculate Roe average values:
+            const double rho_avg= 0.5 * (rhoL + rhoR);
+            const double v_avg= (rhoL_sqrt * vL + rhoR_sqrt * vR) / (rhoL_sqrt + rhoR_sqrt);
+            const double H_avg= (rhoL_sqrt * HL + rhoR_sqrt * HR) / (rhoL_sqrt + rhoR_sqrt); 
+            const double c_avg= std::sqrt((gamma - 1) * (H_avg - 0.5 * v_avg * v_avg));
+
+            // Step 2: Calculate averaged eigenvalues:         
+            const double lambda1_avg= v_avg - c_avg;
+            const double lambda2_avg= v_avg;
+            const double lambda3_avg= v_avg + c_avg;
+
+            // Step 3: Compute averaged right eigenvectors:
+            
+
+            // Step 4: Compute wave strengths:
+
+            // Step 5: Assemble above quantities into flux:
+
+
+
             return fL;
         }
     
