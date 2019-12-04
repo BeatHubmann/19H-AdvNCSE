@@ -80,6 +80,49 @@ class ForwardEuler : public RungeKutta {
     mutable Eigen::MatrixXd dudt;
 };
 
+// Mishra lecture notes 5.8.1. p. 76, cf. Toro p. 539
+class SSP2 : public RungeKutta {
+    private:
+        using super= RungeKutta;
+
+    public:
+        SSP2(std::shared_ptr<RateOfChange> rate_of_change_,
+             std::shared_ptr<BoundaryCondition> boundary_condition_,
+             std::shared_ptr<Limiting> limiting_,
+             int n_rows,
+             int n_cols)
+             : super(std::move(rate_of_change_),
+                     std::move(boundary_condition_),
+                     std::move(limiting_)),
+               dudt(n_rows, n_cols) {}
+
+        virtual void operator() (Eigen::MatrixXd &u1,
+                                 const Eigen::MatrixXd &u0,
+                                 double dt) const override
+        {
+            // u* step: using u1 as temp variable:
+            (*rate_of_change)(dudt, u0);
+            u1= u0 + dt * dudt;
+            post_euler_step(u1);
+
+            // u** step: again using u1 as temp variable:
+            (*rate_of_change)(dudt, u1);
+            u1= u1 + dt * dudt;
+            post_euler_step(u1);
+
+            // final RK2 assembly:
+            u1= 0.5 * (u0 + u1);
+            (*boundary_condition)(u1);
+        }
+
+    private:
+        mutable Eigen::MatrixXd dudt;
+};
+
+
+
+
+
 
 /// make Runge Kutta for FVM
 std::shared_ptr<RungeKutta>

@@ -21,6 +21,37 @@ class CFLCondition {
     virtual double operator()(const Eigen::MatrixXd &u) const = 0;
 };
 
+class FVMCFLCondition : public CFLCondition
+{
+    public:
+        FVMCFLCondition(const Grid& grid,
+                        const std::shared_ptr<Model>& model,
+                        double cfl_number);
+
+        virtual double operator() (const Eigen::MatrixXd& u) const override;
+
+    private:
+        Grid grid;
+        std::shared_ptr<Model> model;
+        double cfl_number;
+};
+
+class DGCFLCondition: public CFLCondition
+{
+    public:
+        DGCFLCondition(const Grid& grid,
+                        const std::shared_ptr<Model>& model,
+                        const DGHandler& dg_handler,
+                        double cfl_number);
+
+        virtual double operator() (const Eigen::MatrixXd& u) const override;
+
+    private:
+        Grid grid;
+        std::shared_ptr<Model> model;
+        DGHandler dg_handler;
+        double cfl_number;
+};
 
 /// make CFL condition for FVM
 std::shared_ptr<CFLCondition>

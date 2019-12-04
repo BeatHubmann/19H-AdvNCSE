@@ -19,27 +19,47 @@
  * @tparam Reconstruction see e.g. `PWConstantReconstruction`.
  */
 template <class NumericalFlux, class Reconstruction>
-class FVMRateOfChange : public RateOfChange {
-  public:
-    FVMRateOfChange(const Grid &grid,
-                    const std::shared_ptr<Model> &model,
-                    const NumericalFlux &numerical_flux,
-                    const Reconstruction &reconstruction)
-        : grid(grid),
-          model(model),
-          numerical_flux(numerical_flux),
-          reconstruction(reconstruction) {}
+class FVMRateOfChange : public RateOfChange
+{
+    public:
+        FVMRateOfChange(const Grid& grid,
+                        const std::shared_ptr<Model>& model,
+                        const NumericalFlux& numerical_flux,
+                        const Reconstruction& reconstruction)
+            : grid(grid),
+              model(model),
+              numerical_flux(numerical_flux),
+              reconstruction(reconstruction) {}
 
-    virtual void operator()(Eigen::MatrixXd &dudt,
-                            const Eigen::MatrixXd &u0) const override {
-        // implement the flux loop here.
-    }
+        virtual void operator()(Eigen::MatrixXd& dudt,
+                                const Eigen::MatrixXd& u0) const override
+        {
+            // implement the flux loop here.
+            const int n_cells= grid.n_cells;
+            const int n_ghost= grid.n_ghost;
 
-  private:
-    Grid grid;
-    std::shared_ptr<Model> model;
-    NumericalFlux numerical_flux;
-    Reconstruction reconstruction;
+            const int n_vars= model->get_nvars();
+
+            const double dx= grid.dx;
+            Eigen::VectorXd fL(n_vars), fR(n_vars);
+            Eigen::VectorXd uL, uR;
+
+            for (int i= n_ghost - 1; i < n_cells - n_ghost; ++i)
+            {
+                std::tie(uL, uR)= reconstruction(u0, i);
+             
+                fL= fR;
+                fR= numerical_flux(uL, uR);
+
+                dudt.col(i)= (fL - fR) / dx;
+            }
+        }
+
+    private:
+        Grid grid;
+        std::shared_ptr<Model> model;
+        NumericalFlux numerical_flux;
+        Reconstruction reconstruction;
 };
 
 std::shared_ptr<RateOfChange>

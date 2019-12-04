@@ -16,18 +16,20 @@ class Model {
     virtual ~Model() = default;
 
     // Pure virtual functions:
-    virtual Eigen::VectorXd flux(const Eigen::VectorXd &u) const = 0;
-    virtual Eigen::VectorXd eigenvalues(const Eigen::VectorXd &u) const = 0;
-    virtual Eigen::MatrixXd eigenvectors(const Eigen::VectorXd &u) const = 0;
-    virtual double max_eigenvalue(const Eigen::VectorXd &u) const = 0;
+    virtual Eigen::VectorXd flux(const Eigen::VectorXd& u) const = 0;
+    virtual Eigen::VectorXd eigenvalues(const Eigen::VectorXd& u) const = 0;
+    virtual Eigen::MatrixXd eigenvectors(const Eigen::VectorXd& u) const = 0;
+    virtual double max_eigenvalue(const Eigen::VectorXd& u) const = 0;
 
-    virtual Eigen::VectorXd cons_to_prim(const Eigen::VectorXd &u) const = 0;
-    virtual Eigen::VectorXd prim_to_cons(const Eigen::VectorXd &u) const = 0;
+    virtual Eigen::VectorXd cons_to_prim(const Eigen::VectorXd& u) const = 0;
+    virtual Eigen::VectorXd prim_to_cons(const Eigen::VectorXd& u) const = 0;
 
     virtual int get_nvars() const = 0;
     virtual std::string get_name() const = 0;
 
     // Virtual functions:
+    virtual std::pair<double, double> lo_hi_eigenvalues(const Eigen::VectorXd& u) const {}
+
     virtual double rho(const Eigen::VectorXd& u_prim) const {}
     virtual double v(const Eigen::VectorXd& u_prim) const {}
     virtual double p(const Eigen::VectorXd& u_prim) const {}
@@ -35,6 +37,7 @@ class Model {
     virtual double E(const Eigen::VectorXd& u_prim) const {}
     virtual double c(const Eigen::VectorXd& u_prim) const {}
     virtual double H(const Eigen::VectorXd& u_prim) const {}
+
     virtual void set_gamma(const double gamma_) {}
     virtual double get_gamma() const {}
 };
@@ -131,7 +134,9 @@ class Euler : public Model {
        
         double max_eigenvalue(const Eigen::VectorXd &u) const override
         {
+            // check if we want cwiseAbs here:
             return (eigenvalues(u).cwiseAbs()).maxCoeff();
+            // return (eigenvalues(u).maxCoeff());
         }
 
         Eigen::VectorXd cons_to_prim(const Eigen::VectorXd &u_cons) const override
@@ -192,8 +197,16 @@ class Euler : public Model {
         inline static const std::string name= "euler";
 
 
+        std::pair<double, double> lo_hi_eigenvalues(const Eigen::VectorXd &u) const override
+        {
+            // check if we want cwiseAbs here:
+            // return (eigenvalues(u).cwiseAbs()).minCoeff();
+            Eigen::VectorXd eigenvals= eigenvalues(u);
+            return {eigenvals.minCoeff(), eigenvals.maxCoeff()};
+        }
+
         /// Helper functions to deal w/ common names for Euler eqn expressions
-        /// Vector u_prim must contain primary variables: u_prim = (rho, v, p)'
+        /// Vector u_prim must contain primary variables: u_prim = (rho, v, p)
         /// ------------------------------------------------------------------
 
         /// Primitive variables:

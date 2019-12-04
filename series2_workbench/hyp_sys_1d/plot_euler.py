@@ -23,15 +23,17 @@ def load_snapshot(filename):
     j = load_json(filename)
     return j["time"], np.array(j["cell_centers"]), np.array(j["density"]), np.array(j["velocity"]), np.array(j["pressure"])
 
-def plot_snapshot(t, x, u):
+def plot_snapshot(t, x, u, fn):
     plt.plot(x, u)
     plt.title(f"t = {t:0.6f}")
+    plt.suptitle(fn)
     plt.show()
 
 if __name__ == "__main__":
 
-    files = sorted(glob.glob("output/euler_fvm_sod_shock_tube*.json"))
+    # files = sorted(glob.glob("output/euler_fvm_sod_shock_tube*.json"))
+    files = sorted(glob.glob("output/fvm/sod_shock_tube/euler_*.json"))
 
     for fn in files:
         t, x, rho, v, p = load_snapshot(fn)
-        plot_snapshot(t, x, rho)
+        plot_snapshot(t, x, rho, fn)
