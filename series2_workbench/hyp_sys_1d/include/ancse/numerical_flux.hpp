@@ -228,7 +228,11 @@ class HLLc
             // calculate intermediate estimated M wave speed (ANCSE (9.33), Toro (10.37)):
             const double sM= (pR - pL + rhoL * vL * (sL - vL) - rhoR * vR * (sR - vR)
                              / (rhoL * (sL - vL) - rhoR * (sR - vR)));
-            std::cout << sL << " " << sM << " " << sR << "\n";
+            // std::cout << sL << " " << sM << " " << sR << "\n";
+
+            // calculate intermediate pressure p* := p*R = p*R; ANCSE (9.34), Toro (10.30):
+            const double pM= pR + rhoR * (sR - vR) * (sM - vR);            
+
             // setup helper vector D* for calculating intermediate fluxes; Toro (10.40):
             Eigen::VectorXd d(n_vars);
             d << 0.0,
@@ -239,11 +243,15 @@ class HLLc
             if (sL >= 0.0)
                 return fL;
             else if (sL < 0.0 && sM >= 0.0)
-                return (sM * (sL * uL - fL) + sL * (pL + rhoL * (sL - vL) * (sM - vL)) * d)
-                       / (sL - sM);
+            {
+                Eigen::VectorXd uML= (sL * uL - fL + pM * d) / (sL - sM);
+                return (fL + sL * (uML - uL));
+            }
             else if (sM < 0.0 && sR >= 0.0)
-                return (sM * (sR * uR - fR) + sR * (pR + rhoR * (sR - vR) * (sM - vR)) * d)
-                       / (sR - sM);
+            {
+                Eigen::VectorXd uMR= (sR * uR - fR + pM * d) / (sR - sM);
+                return (fR + sR * (uMR - uR));
+            }
             else if (sR < 0.0)
                 return fR;
         }

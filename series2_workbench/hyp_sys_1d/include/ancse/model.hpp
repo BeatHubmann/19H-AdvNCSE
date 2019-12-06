@@ -127,7 +127,7 @@ class Euler : public Model {
             
             eigvecs << 1.0,                    1.0,                 1.0,
                        v(u) - c(u),            v(u),                v(u) + c(u),
-                       H(u) - (v(u) * c(u)),   0.5 * v(u) * v(u),   H(u) - (v(u) * c(u));
+                       H(u) - v(u) * c(u),     0.5 * v(u) * v(u),   H(u) + (v(u) * c(u));
             // IS 2ND EIGENVEC 3RD ELEMENT REALLY 0.5 v2?
             return eigvecs;
         }
@@ -143,16 +143,9 @@ class Euler : public Model {
         {
             Eigen::VectorXd u_prim(n_vars);
             
-            double m, p, rho, v, E;
-            rho= u_cons(0);
-            m= u_cons(1);
-            E= u_cons(2);
-            v= m / rho;
-            p= (gamma - 1) * (E - 0.5 * rho * v * v);
-
-            u_prim << rho,
-                      v,
-                      p;
+            u_prim << rho(u_cons),
+                      v(u_cons),
+                      p(u_cons);
                       
             return u_prim;
         }
@@ -161,9 +154,9 @@ class Euler : public Model {
         {
             Eigen::VectorXd u_cons(n_vars);
 
-            u_cons << rho(u_prim),
-                      m(u_prim),
-                      E(u_prim);
+            u_cons << u_prim(0),
+                      u_prim(0) * u_prim(1),
+                      u_prim(2) / (gamma - 1) + 0.5 * u_prim(0) * u_prim(1) * u_prim(1);
 
             return u_cons;
         }
@@ -206,108 +199,57 @@ class Euler : public Model {
         }
 
         /// Helper functions to deal w/ common names for Euler eqn expressions
-        /// Vector u_prim must contain primary variables: u_prim = (rho, v, p)
+        /// Vector u must contain conserved variables: u = (rho, m, E)
+        /// as given in tasks initial conditions
         /// ------------------------------------------------------------------
+
+        /// Conserved variables:
+        // rho : density
+        inline double rho(const Eigen::VectorXd& u) const override
+        {
+            return u(0);
+        }
+
+        // m : momentum
+        inline double m(const Eigen::VectorXd& u) const override
+        {
+            return u(1);
+        }
+        
+        // E : total energy for ideal polytropic gas (internal energy + kinetic energy)
+        inline double E(const Eigen::VectorXd& u) const override
+        {
+            return u(2);
+        }
 
         /// Primitive variables:
         // rho : density
-        inline double rho(const Eigen::VectorXd& u_prim) const override
-        {
-            return u_prim(0);
-        }
+        // same as for conserved variables
 
         // v : velocity
-        inline double v(const Eigen::VectorXd& u_prim) const override
+        inline double v(const Eigen::VectorXd& u) const override
         {
-            return u_prim(1);
+            return m(u) / rho(u);
         }
 
         // p : pressure
-        inline double p(const Eigen::VectorXd& u_prim) const override
+        inline double p(const Eigen::VectorXd& u) const override
         {
-            return u_prim(2);
+            return (E(u) - 0.5 * m(u) * m(u) / rho(u)) * (gamma - 1);
         }
-
-
-
-        /// Conserved variables:
-        // m : momentum
-        inline double m(const Eigen::VectorXd& u_prim) const override
-        {
-            return rho(u_prim) * v(u_prim);
-        }
-
-        // E : total energy for ideal polytropic gas (internal energy + kinetic energy)
-        inline double E(const Eigen::VectorXd& u_prim) const override
-        {
-            return p(u_prim) / (gamma - 1) + 0.5 * rho(u_prim) * v(u_prim) * v(u_prim);
-        }
-
 
         /// c : speed of sound
-        inline double c(const Eigen::VectorXd& u_prim) const override
+        inline double c(const Eigen::VectorXd& u) const override
         {
-            return std::sqrt(gamma * p(u_prim) / rho(u_prim));
+            return std::sqrt(gamma * p(u) / rho(u));
         }
 
         /// H : total specific enthalpy
-        inline double H(const Eigen::VectorXd& u_prim) const override
+        inline double H(const Eigen::VectorXd& u) const override
         {
-            return (E(u_prim) + p(u_prim)) / rho(u_prim);
+            return (E(u) + p(u)) / rho(u);
         }
-
-
-
-
-        // /// Primitive variables:
-        // // rho : density
-        // inline double rho(const Eigen::VectorXd& u_prim) const override
-        // {
-        //     return u_prim(0);
-        // }
-
-        // // v : velocity
-        // inline double v(const Eigen::VectorXd& u_prim) const override
-        // {
-        //     return u_prim(1);
-        // }
-
-        // // p : pressure
-        // inline double p(const Eigen::VectorXd& u_prim) const override
-        // {
-        //     return u_prim(2);
-        // }
-
-
-
-        // /// Conserved variables:
-        // // m : momentum
-        // inline double m(const Eigen::VectorXd& u_prim) const override
-        // {
-        //     return rho(u_prim) * v(u_prim);
-        // }
-
-        // // E : total energy for ideal polytropic gas (internal energy + kinetic energy)
-        // inline double E(const Eigen::VectorXd& u_prim) const override
-        // {
-        //     return p(u_prim) / (gamma - 1) + 0.5 * rho(u_prim) * v(u_prim) * v(u_prim);
-        // }
-
-
-        // /// c : speed of sound
-        // inline double c(const Eigen::VectorXd& u_prim) const override
-        // {
-        //     return std::sqrt(gamma * p(u_prim) / rho(u_prim));
-        // }
-
-        // /// H : total specific enthalpy
-        // inline double H(const Eigen::VectorXd& u_prim) const override
-        // {
-        //     return (E(u_prim) + p(u_prim)) / rho(u_prim);
-        // }
-        
 };
-
 
 std::shared_ptr<Model> make_model (const nlohmann::json &config);
 
