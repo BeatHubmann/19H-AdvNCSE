@@ -117,10 +117,4 @@ class PWLinearReconstruction
         VectorSlopeLimiter<SlopeLimiter> slope_limiter;
 };
 
-
-
-
-
-
-
 #endif // HYPSYS1D_RATE_OF_CHANGE_HPP

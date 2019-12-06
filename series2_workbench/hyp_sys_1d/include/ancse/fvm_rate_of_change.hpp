@@ -41,7 +41,7 @@ class FVMRateOfChange : public RateOfChange
             const int n_vars= model->get_nvars();
 
             const double dx= grid.dx;
-            Eigen::VectorXd fL(n_vars), fR(n_vars);
+            Eigen::VectorXd fL= Eigen::VectorXd::Zero(n_vars), fR= Eigen::VectorXd::Zero(n_vars);
             Eigen::VectorXd uL, uR;
 
             for (int i= n_ghost - 1; i < n_cells - n_ghost; ++i)

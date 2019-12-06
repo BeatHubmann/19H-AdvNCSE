@@ -135,7 +135,7 @@ class Roe
             
             right_eigenvec_2 << 1.0,
                                 v_avg,
-                                0.5 * v_avg * v_avg * v_avg * v_avg;
+                                0.5 * v_avg * v_avg * v_avg * v_avg; // ARE THESE REALLY v2?
             
             right_eigenvec_5 << 1.0,
                                 v_avg + c_avg,
@@ -164,7 +164,7 @@ class Roe
         std::shared_ptr<Model> model;
 };
 
-// ANCSE lecture notes 9.3 (p120): HLL scheme with wave speeds given by (9.27) cf. Toro p.320:
+// ANCSE lecture notes 9.3 (p.120): HLL scheme (1983); wave speeds given by (9.27) cf. Toro p.320:
 class HLL
 {
     public:
@@ -175,9 +175,9 @@ class HLL
             auto fL= model->flux(uL);
             auto fR= model->flux(uR);
 
-            const int n_vars= model->get_nvars();
+            // const int n_vars= model->get_nvars();
 
-            // calculate simple choice wave speeds (ANCSE (9.27)):
+            // calculate simple choice L and R wave speeds (ANCSE (9.27)):
             double lo_lambdaL, hi_lambdaL, lo_lambdaR, hi_lambdaR;
             std::tie(lo_lambdaL, hi_lambdaL)= model->lo_hi_eigenvalues(uL);
             std::tie(lo_lambdaR, hi_lambdaR)= model->lo_hi_eigenvalues(uR);
@@ -197,9 +197,59 @@ class HLL
         std::shared_ptr<Model> model;
 };
 
+// ANCSE lecture notes 9.4 (p.120): HLLc 3-wave solver (1994) cf. Toro p.322
 class HLLc
 {
+    public:
+        explicit HLLc(const std::shared_ptr<Model>& model) : model(model) {}
+    
+        Eigen::VectorXd operator() (const Eigen::VectorXd uL, const Eigen::VectorXd uR) const
+        {
+            auto fL= model->flux(uL);
+            auto fR= model->flux(uR);
 
+            auto rhoL= model->rho(uL);
+            auto rhoR= model->rho(uR);
+            auto vL= model->v(uL);
+            auto vR= model->v(uR);
+            auto pL= model->p(uL);
+            auto pR= model->p(uL);
+
+            const int n_vars= model->get_nvars();
+
+            // calculate simple choice L and R wave speeds (ANCSE (9.27)):
+            double lo_lambdaL, hi_lambdaL, lo_lambdaR, hi_lambdaR;
+            std::tie(lo_lambdaL, hi_lambdaL)= model->lo_hi_eigenvalues(uL);
+            std::tie(lo_lambdaR, hi_lambdaR)= model->lo_hi_eigenvalues(uR);
+
+            const double sL= std::min(lo_lambdaL, lo_lambdaR);
+            const double sR= std::max(hi_lambdaL, hi_lambdaR);            
+
+            // calculate intermediate estimated M wave speed (ANCSE (9.33), Toro (10.37)):
+            const double sM= (pR - pL + rhoL * vL * (sL - vL) - rhoR * vR * (sR - vR)
+                             / (rhoL * (sL - vL) - rhoR * (sR - vR)));
+            std::cout << sL << " " << sM << " " << sR << "\n";
+            // setup helper vector D* for calculating intermediate fluxes; Toro (10.40):
+            Eigen::VectorXd d(n_vars);
+            d << 0.0,
+                 1.0,
+                 sM;
+
+            // return choice of flux depeding on signal speeds; Toro (10.26), (10.41):
+            if (sL >= 0.0)
+                return fL;
+            else if (sL < 0.0 && sM >= 0.0)
+                return (sM * (sL * uL - fL) + sL * (pL + rhoL * (sL - vL) * (sM - vL)) * d)
+                       / (sL - sM);
+            else if (sM < 0.0 && sR >= 0.0)
+                return (sM * (sR * uR - fR) + sR * (pR + rhoR * (sR - vR) * (sM - vR)) * d)
+                       / (sR - sM);
+            else if (sR < 0.0)
+                return fR;
+        }
+
+    private:
+        std::shared_ptr<Model> model;
 };
 
 #endif // HYPSYS1D_NUMERICAL_FLUX_HPP

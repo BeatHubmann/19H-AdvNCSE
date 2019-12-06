@@ -28,6 +28,7 @@ deduce_numerical_flux(const nlohmann::json &config,
                             LaxFriedrichs(grid, model, simulation_time))
     REGISTER_NUMERICAL_FLUX("roe", Roe, Roe(model))
     REGISTER_NUMERICAL_FLUX("hll", HLL, HLL(model))
+    REGISTER_NUMERICAL_FLUX("hllc", HLLc, HLLc(model))
 
     throw std::runtime_error(
         fmt::format("Unknown numerical flux. {}", std::string(config["flux"])));
