@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ancse/model.hpp>
 
-TEST(TestEulerModel, Example)
+TEST(TestModelEuler, SimpleExample)
 {
     auto model = Euler();
     auto u = Eigen::Vector3d(1,1,1);
@@ -33,7 +33,7 @@ TEST(TestEulerModel, Example)
     ASSERT_DOUBLE_EQ((model.eigenvectors(u) - evs).norm(), 0);
 }
 
-TEST(TestEulerModel2, Conversions)
+TEST(TestModelEuler, Prim2Cons2PrimConversions)
 {
     auto model = Euler();
     Eigen::VectorXd u;

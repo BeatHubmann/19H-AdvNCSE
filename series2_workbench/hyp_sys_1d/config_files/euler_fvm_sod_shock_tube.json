@@ -11,7 +11,7 @@
   "time_integrator": "ssp2",
   "flux": "rusanov",
 
-  "n_interior_cells": 1024,
+  "n_interior_cells": 128,
   "n_ghost": 2,
 
   "t_end": 0.2,

@@ -72,37 +72,35 @@ struct MonotonizedCentral
     }
 };
 
-// struct MinAbs
-// {
-//     inline double operator()(double sL, double sR) const
-//     {
-//         return minabs(sL, sR);
-//     }
-// };
+struct MinAbs
+{
+    inline double operator()(double sL, double sR) const
+    {
+        return minabs(sL, sR);
+    }
+};
 
 
-// struct VanLeerFVM
-// {
-//     inline double operator()(double sL, double sR) const
-//     {
-//         double r = sL / (sR + eps);
-//         return (r + std::abs(r)) / (1 + std::abs(r)) * sR;
-//     }
+struct VanLeerFVM
+{
+    inline double operator()(double sL, double sR) const
+    {
+        double r = sL / (sR + eps);
+        return (r + std::abs(r)) / (1 + std::abs(r)) * sR;
+    }
 
-//     private:
-//         double eps = 1e-10;
-// };
-
-
-// struct Unlimited
-// {
-//     inline double operator()(double a, double b) const
-//     {
-//         return 0.5 * (a + b);
-//     }
-// };
+    private:
+        double eps = 1e-10;
+};
 
 
+struct Unlimited
+{
+    inline double operator()(double a, double b) const
+    {
+        return 0.5 * (a + b);
+    }
+};
 
 /// DG limiters
 struct VanLeer

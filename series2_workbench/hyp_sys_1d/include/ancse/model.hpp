@@ -128,15 +128,14 @@ class Euler : public Model {
             eigvecs << 1.0,                    1.0,                 1.0,
                        v(u) - c(u),            v(u),                v(u) + c(u),
                        H(u) - v(u) * c(u),     0.5 * v(u) * v(u),   H(u) + (v(u) * c(u));
-            // IS 2ND EIGENVEC 3RD ELEMENT REALLY 0.5 v2?
+
             return eigvecs;
         }
        
         double max_eigenvalue(const Eigen::VectorXd &u) const override
         {
-            // check if we want cwiseAbs here:
+            // actually max(abs(eigenvalues)):
             return (eigenvalues(u).cwiseAbs()).maxCoeff();
-            // return (eigenvalues(u).maxCoeff());
         }
 
         Eigen::VectorXd cons_to_prim(const Eigen::VectorXd &u_cons) const override

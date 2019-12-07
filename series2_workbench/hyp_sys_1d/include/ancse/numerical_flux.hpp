@@ -135,7 +135,7 @@ class Roe
             
             right_eigenvec_2 << 1.0,
                                 v_avg,
-                                0.5 * v_avg * v_avg * v_avg * v_avg; // ARE THESE REALLY v2?
+                                0.5 * v_avg * v_avg; 
             
             right_eigenvec_5 << 1.0,
                                 v_avg + c_avg,
