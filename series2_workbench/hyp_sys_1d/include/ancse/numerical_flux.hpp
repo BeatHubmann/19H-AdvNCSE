@@ -214,6 +214,8 @@ class HLLc
             auto vR= model->v(uR);
             auto pL= model->p(uL);
             auto pR= model->p(uL);
+            auto EL= model->E(uL);
+            auto ER= model->E(uR);
 
             const int n_vars= model->get_nvars();
 
@@ -226,33 +228,31 @@ class HLLc
             const double sR= std::max(hi_lambdaL, hi_lambdaR);            
 
             // calculate intermediate estimated M wave speed (ANCSE (9.33), Toro (10.37)):
-            const double sM= (pR - pL + rhoL * vL * (sL - vL) - rhoR * vR * (sR - vR)
-                             / (rhoL * (sL - vL) - rhoR * (sR - vR)));
-            // std::cout << sL << " " << sM << " " << sR << "\n";
+            const double sM= (pR - pL + rhoL * vL * (sL - vL) - rhoR * vR * (sR - vR))
+                             / (rhoL * (sL - vL) - rhoR * (sR - vR));
 
-            // calculate intermediate pressure p* := p*R = p*R; ANCSE (9.34), Toro (10.30):
-            const double pM= pR + rhoR * (sR - vR) * (sM - vR);            
-
-            // setup helper vector D* for calculating intermediate fluxes; Toro (10.40):
-            Eigen::VectorXd d(n_vars);
-            d << 0.0,
-                 1.0,
-                 sM;
-
-            // return choice of flux depeding on signal speeds; Toro (10.26), (10.41):
-            if (sL >= 0.0)
+            // return choice of flux depeding on signal speeds; Toro (10.26), (10.38), (10.39):
+            if (sL > 0.0)
                 return fL;
-            else if (sL < 0.0 && sM >= 0.0)
+            else if (sL <= 0.0 && sM > 0.0)
             {
-                Eigen::VectorXd uML= (sL * uL - fL + pM * d) / (sL - sM);
+                Eigen::VectorXd dML(n_vars);
+                dML << 1.0,
+                       sM,
+                       EL / rhoL + (sM - vL) * (sM + pL / rhoL / (sL - vL));
+                Eigen::VectorXd uML= rhoL * (sL - vL) / (sL - sM) * dML;
                 return (fL + sL * (uML - uL));
             }
-            else if (sM < 0.0 && sR >= 0.0)
+            else if (sM <= 0.0 && sR > 0.0)
             {
-                Eigen::VectorXd uMR= (sR * uR - fR + pM * d) / (sR - sM);
+                Eigen::VectorXd dMR(n_vars);
+                dMR << 1.0,
+                       sM,
+                       ER / rhoR + (sM - vR) * (sM + pR / rhoR / (sR - vR));
+                Eigen::VectorXd uMR= rhoR * (sR - vR) / (sR - sM) * dMR;
                 return (fR + sR * (uMR - uR));
             }
-            else if (sR < 0.0)
+            else if (sR <= 0.0)
                 return fR;
         }
 
