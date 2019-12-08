@@ -22,4 +22,11 @@ double cell_center(const Grid &grid, int i);
 /// Compute the physical point of cell `i` from given reference point.
 double cell_point(const Grid &grid, int i, double xi);
 
+/// for DG:
+/// compute reference point in [0, 1] given physical point x:
+double reference_point(const Grid& grid, double x);
+
+/// compute grid cell index given physical point x:
+int cell_idx(const Grid& grid, double x);
+
 #endif // HYPSYS1D_GRID_HPP

@@ -7,8 +7,11 @@ Eigen::VectorXd DGHandler
 :: build_sol(const Eigen::VectorXd& u,
              const Eigen::VectorXd& basis) const
 {
-    Eigen::VectorXd uSol = Eigen::VectorXd::Zero(n_vars);
+    Eigen::VectorXd uSol(n_vars);
 
+    // looping over m(=3 for 1D Euler) n_vars in the coefficient column vector with stride size n_coeff:
+    for (int l= 0; l < n_vars; ++l)
+        uSol(l)= u.segment(l * n_coeff, n_coeff).dot(basis);
 
     return uSol;
 }
@@ -16,12 +19,12 @@ Eigen::VectorXd DGHandler
 /// build solution from DG coefficients at a given reference point
 Eigen::VectorXd DGHandler 
 :: build_sol(const Eigen::VectorXd& u,
-             double xi) const
+             double x) const
 {
-    Eigen::VectorXd uSol(n_vars);
+    // convert physical point x in cell K_i
 
-
-    return uSol;
+    
+    return u;
 }
 
 /// build cell average

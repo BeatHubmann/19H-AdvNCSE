@@ -15,3 +15,15 @@ double cell_point(const Grid &grid, int i, double xi) {
     auto [a, _] = grid.domain;
     return a + grid.dx * (i + xi - grid.n_ghost);
 }
+
+double reference_point(const Grid& grid, double x)
+{
+    auto [a, _]= grid.domain;
+    return ((x - a) - int((x - a) / grid.dx) * grid.dx) / grid.dx;
+}
+
+int cell_idx(const Grid& grid, double x)
+{
+    auto [a, _]= grid.domain;
+    return int((x - a) / grid.dx) + grid.n_ghost;
+}
