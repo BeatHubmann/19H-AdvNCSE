@@ -2,6 +2,8 @@
 # Created by https://www.gitignore.io/api/vim,c++,latex,cmake,linux,macos,python,windows,visualstudio,visualstudiocode,jupyternotebooks
 # Edit at https://www.gitignore.io/?templates=vim,c++,latex,cmake,linux,macos,python,windows,visualstudio,visualstudiocode,jupyternotebooks
 
+*.vscode
+
 ### C++ ###
 # Prerequisites
 *.d
