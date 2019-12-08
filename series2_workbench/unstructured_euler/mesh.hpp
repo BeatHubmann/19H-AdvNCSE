@@ -47,6 +47,15 @@ class Mesh {
         return neighbouringTriangles(triangle, edge);
     }
 
+    //! Gets the edge index of the neighbouring triangle (j) at the given edge k of input triangle
+    int getNeighbourEdge(int triangle, int edge) const
+    {
+        int j= getNeighbour(triangle, edge);
+        assert (j >= 0);
+        return neighbouringEdges(triangle, edge); 
+    }
+
+
     //! Is neighbour 'triangle' a valid neighbour of 'edge'?
     bool isValidNeighbour(int triangle, int edge) const {
         return getNeighbour(triangle, edge) >= 0;

@@ -54,20 +54,37 @@ double energyFromPVars(double rho, double vx, double vy, double p) {
 }
 
 //! Computes the maximum eigen value
-double maxEigenValue(const EulerState &u) {
-
-    double rho = u[0];
-    double v = std::sqrt(u[1] * u[1] + u[2] * u[2]) / rho;
+double maxEigenValue(const EulerState &u)
+{
+    double rho= u[0];
+    double v= std::sqrt(u[1] * u[1] + u[2] * u[2]) / rho;
     return v + speedOfSound(u);
 }
 
 double maxEigenValue(const EulerState &leftState,
-                     const EulerState &rightState) {
-
-    auto leftEigenValue = maxEigenValue(leftState);
-    auto rightEigenValue = maxEigenValue(rightState);
+                     const EulerState &rightState)
+{
+    auto leftEigenValue= maxEigenValue(leftState);
+    auto rightEigenValue= maxEigenValue(rightState);
 
     return std::max(leftEigenValue, rightEigenValue);
+}
+
+//! Computes the minimum eigen value
+double minEigenValue(const EulerState &u)
+{
+    double rho= u[0];
+    double v= std::sqrt(u[1] * u[1] + u[2] * u[2]) / rho;
+    return v - speedOfSound(u);
+}
+
+double minEigenValue(const EulerState &leftState,
+                     const EulerState &rightState)
+{
+    auto leftEigenValue= minEigenValue(leftState);
+    auto rightEigenValue= minEigenValue(rightState);
+
+    return std::min(leftEigenValue, rightEigenValue);
 }
 
 //! Check that all components of u are real-valued, e.g. not inf or nan.

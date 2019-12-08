@@ -39,7 +39,7 @@ Eigen::MatrixXd DGHandler
         for (int j= 0; j < n_cells; ++j)
             u0(i, j)+= u(i * n_coeff, j);
 
-    return u0;
+    return u0 / grid.dx;
 }
 
 /// build split solution uSol_m = u0 + um, uSol_p = u0 - up

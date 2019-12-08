@@ -13,7 +13,20 @@ class CFLCondition {
         // compute the cfl condition here.
         // you can use `assert_valid_timestep` to check if
         // the computed value is valid.
-        return 0.001;
+        
+        // in analogy to exercise 1 and according to eqns 33, 34 of exercise sheet:
+        
+        const int n_cells= U.cols();
+
+        double a_max= 0.0;
+
+        for (int i= 0; i < n_cells; ++i)
+            a_max= std::max(a_max, euler::maxEigenValue(U.col(i)));
+
+        double dt= cfl_number * dx / a_max;
+        assert_valid_timestep(dt);
+
+        return dt;
     }
 
     void assert_valid_timestep(double dt_cfl) const {
