@@ -21,10 +21,10 @@ Eigen::VectorXd DGHandler
 :: build_sol(const Eigen::VectorXd& u,
              double x) const
 {
-    // convert physical point x in cell K_i
-
+    // convert physical point x in cell K_i into reference point xi:
+    const double xi= reference_point(grid, x);
     
-    return u;
+    return build_sol(u, poly_basis(xi));
 }
 
 /// build cell average
@@ -32,8 +32,12 @@ Eigen::MatrixXd DGHandler
 :: build_cell_avg (const Eigen::MatrixXd& u) const
 {
     auto n_cells = u.cols();
-    Eigen::MatrixXd u0 (n_vars, n_cells);
+    Eigen::MatrixXd u0= Eigen::MatrixXd::Zero(n_vars, n_cells);
 
+    // iterating over matrix u0 and filling from matrix u:
+    for (int i= 0; i < n_vars; ++i)
+        for (int j= 0; j < n_cells; ++j)
+            u0(i, j)+= u(i * n_coeff, j);
 
     return u0;
 }
